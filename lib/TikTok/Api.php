@@ -58,7 +58,14 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
             /**
              * Initialize the config array
              */
-            $this->_config = array_merge(['cookie_file' => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'tiktok.txt'], $this->defaults, $config);
+            $this->_config = array_merge(
+                [
+                    'cookie_file' => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'tiktok.txt',
+                    'cookies' => '',
+                ], 
+                $this->defaults,
+                $config
+            );
             /**
              * If Cache Engine is enabled
              */
@@ -587,6 +594,7 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
                 CURLOPT_COOKIEJAR      => $this->_config['cookie_file'],
                 CURLOPT_COOKIEFILE => $this->_config['cookie_file'],
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_2,
+                CURLOPT_COOKIE => $this->_config['cookies'],
             ];
 
             curl_setopt_array($ch, $options);

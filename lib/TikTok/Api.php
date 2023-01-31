@@ -62,11 +62,10 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
                 [
                     'cookie_file' => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'tiktok.txt',
                     'cookies' => '',
-                ],
+                ], 
                 $this->defaults,
                 $config
             );
-
             /**
              * If Cache Engine is enabled
              */
@@ -261,7 +260,7 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
          */
         public function getNoWatermarkLegacy($url = "")
         {
-            // This is old way to get non-watermarked video url for videos posted before August 2020. 
+            // This is old way to get non-watermarked video url for videos posted before August 2020.
             // To obtain non-watermaked video url for newer videos, there is no easy way to so.
             // Contact me via my profile contact details to purchase a copy of my script that works with newer videos.
             if (!preg_match("/https?:\/\/([^\.]+)?\.tiktok\.com/", $url)) {
@@ -596,6 +595,8 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
                 CURLOPT_HTTPHEADER     => array_merge([], $headers),
                 CURLOPT_COOKIEJAR      => $this->_config['cookie_file'],
                 CURLOPT_COOKIEFILE => $this->_config['cookie_file'],
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_2,
+                CURLOPT_COOKIE => $this->_config['cookies'],
             ];
 
             curl_setopt_array($ch, $options);

@@ -9,7 +9,6 @@
 		"tiktok-scraper"
 	],
 	"authors": [
-
 		{
 			"name": "Sovit Tamrakar",
 			"email": "sovit.tamrakar@gmail.com",
@@ -27,10 +26,13 @@
 			"Sovit\\": "lib"
 		}
 	},
-	"require": {
-	},
+	"require": {},
 	"type": "library",
 	"archive": {
-		"exclude": ["/example", "/.github","/docs"]
+		"exclude": [
+			"/example",
+			"/.github",
+			"/docs"
+		]
 	}
 }

@@ -58,7 +58,15 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
             /**
              * Initialize the config array
              */
-            $this->_config = array_merge(['cookie_file' => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'tiktok.txt'], $this->defaults, $config);
+            $this->_config = array_merge(
+                [
+                    'cookie_file' => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'tiktok.txt',
+                    'cookies' => '',
+                ],
+                $this->defaults,
+                $config
+            );
+
             /**
              * If Cache Engine is enabled
              */
@@ -174,7 +182,7 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
                 }
             }
             $result = $this->remote_call("https://www.tiktok.com/music/original-sound-{$music_id}?lang=en", false);
-            $json_string = Helper::string_between($result, "window['SIGI_STATE']=", ";window['SIGI_RETRY']=");
+            $json_string = Helper::string_between($result, '<script id="SIGI_STATE" type="application/json">', '</script><script id="SIGI_RETRY" type="application/json">');
             if (!empty($json_string)) {
                 $result = json_decode($json_string);
                 if (isset($result->MusicModule)) {
@@ -425,13 +433,13 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
             }
             $username = urlencode($username);
             $result = $this->remote_call("https://www.tiktok.com/@{$username}?lang=en", false);
-            $json_string = Helper::string_between($result, "window['SIGI_STATE']=", ";window['SIGI_RETRY']=");
+            $json_string = Helper::string_between($result, '<script id="SIGI_STATE" type="application/json">', '</script><script id="SIGI_RETRY" type="application/json">');
             if (!empty($json_string)) {
                 $jsonData = json_decode($json_string);
-                if (isset($jsonData->UserModule, $jsonData->UserPage)) {
+                if (isset($jsonData->MobileUserModule, $jsonData->MobileUserPage)) {
                     $result = (object) [
-                        'user' => $jsonData->UserModule->users->{$jsonData->UserPage->uniqueId},
-                        'stats' => $jsonData->UserModule->stats->{$jsonData->UserPage->uniqueId}
+                        'user' => $jsonData->MobileUserModule->users->{$jsonData->MobileUserPage->uniqueId},
+                        'stats' => $jsonData->MobileUserModule->stats->{$jsonData->MobileUserPage->uniqueId}
                     ];
                     if ($this->cacheEnabled) {
                         $this->cacheEngine->set($cacheKey, $result, $this->_config['cache-timeout']);
@@ -530,12 +538,12 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
                 throw new \Exception("Invalid VIDEO URL");
             }
             $result = $this->remote_call($url, false);
-            $result = Helper::string_between($result, "window['SIGI_STATE']=", ";window['SIGI_RETRY']=");
+            $result = Helper::string_between($result, '<script id="SIGI_STATE" type="application/json">', '</script><script id="SIGI_RETRY" type="application/json">');
             if (!empty($result)) {
                 $jsonData = json_decode($result);
-                if (isset($jsonData->ItemModule, $jsonData->ItemList, $jsonData->UserModule)) {
-                    $id = $jsonData->ItemList->video->keyword;
-                    $item = $jsonData->ItemModule->{$id};
+                if (isset($jsonData->MobileItemModule, $jsonData->MobileItemList, $jsonData->MobileUserModule)) {
+                    $id = $jsonData->MobileItemList->video->keyword;
+                    $item = $jsonData->MobileItemModule->{$id};
                     $username = $item->author;
                     $result = (object) [
                         'statusCode' => 0,
@@ -543,7 +551,7 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
                             'type'   => 'video',
                             'detail' => (object) [
                                 "url" => $url,
-                                "user" => $jsonData->UserModule->users->{$username},
+                                "user" => $jsonData->MobileUserModule->users->{$username},
                                 "stats" => $item->stats
                             ],
                         ],
@@ -614,7 +622,6 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
          */
         private function failure()
         {
-
             @unlink($this->_config['cookie_file']);
             return false;
         }

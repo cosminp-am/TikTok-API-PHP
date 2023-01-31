@@ -297,6 +297,8 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
                         CURLOPT_MAXREDIRS      => 10,
                         CURLOPT_COOKIEJAR      => $this->_config['cookie_file'],
                         CURLOPT_COOKIEFILE => $this->_config['cookie_file'],
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_2,
+                        CURLOPT_COOKIE => $this->_config['cookies'],
                     ];
                     curl_setopt_array($ch, $options);
                     if (defined('CURLOPT_IPRESOLVE') && defined('CURL_IPRESOLVE_V4')) {

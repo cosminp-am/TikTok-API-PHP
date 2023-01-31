@@ -62,7 +62,7 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
                 [
                     'cookie_file' => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'tiktok.txt',
                     'cookies' => '',
-                ], 
+                ],
                 $this->defaults,
                 $config
             );
@@ -71,7 +71,7 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
              */
             if ($cacheEngine) {
                 $this->cacheEnabled = true;
-                $this->cacheEngine        = $cacheEngine;
+                $this->cacheEngine = $cacheEngine;
             }
         }
         /**

@@ -540,12 +540,14 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
             }
             $result = $this->remote_call($url, false);
             $result = Helper::string_between($result, '<script id="SIGI_STATE" type="application/json">', '</script><script id="SIGI_RETRY" type="application/json">');
+
             if (!empty($result)) {
                 $jsonData = json_decode($result);
                 if (isset($jsonData->MobileItemModule, $jsonData->MobileItemList, $jsonData->MobileUserModule)) {
                     $id = $jsonData->MobileItemList->video->keyword;
                     $item = $jsonData->MobileItemModule->{$id};
                     $username = $item->author;
+
                     $result = (object) [
                         'statusCode' => 0,
                         'info'       => (object) [
@@ -553,6 +555,29 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
                             'detail' => (object) [
                                 "url" => $url,
                                 "user" => $jsonData->MobileUserModule->users->{$username},
+                                "stats" => $item->stats
+                            ],
+                        ],
+                        "items"      => [$item],
+                        "hasMore"    => false,
+                        "minCursor"  => '0',
+                        "maxCursor"  => '0'
+                    ];
+                    if ($this->cacheEnabled) {
+                        $this->cacheEngine->set($cacheKey, $result, $this->_config['cache-timeout']);
+                    }
+                    return $result;
+                } else if (isset($jsonData->SharingVideoModule)) {
+                    $item = $jsonData->SharingVideoModule->videoData->itemInfo->itemStruct;
+                    $id = $item->id;
+
+                    $result = (object) [
+                        'statusCode' => 0,
+                        'info'       => (object) [
+                            'type'   => 'video',
+                            'detail' => (object) [
+                                "url" => $url,
+                                "user" => $item->user,
                                 "stats" => $item->stats
                             ],
                         ],

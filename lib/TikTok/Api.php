@@ -577,7 +577,7 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
                             'type'   => 'video',
                             'detail' => (object) [
                                 "url" => $url,
-                                "user" => $item->user,
+                                "user" => $item->author,
                                 "stats" => $item->stats
                             ],
                         ],

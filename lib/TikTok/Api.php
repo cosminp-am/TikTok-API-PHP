@@ -567,7 +567,7 @@ if (!\class_exists('\Sovit\TikTok\Api')) {
                         $this->cacheEngine->set($cacheKey, $result, $this->_config['cache-timeout']);
                     }
                     return $result;
-                } else if (isset($jsonData->SharingVideoModule)) {
+                } else if (isset($jsonData->SharingVideoModule) && isset($jsonData->SharingVideoModule->videoData->itemInfo->itemStruct)) {
                     $item = $jsonData->SharingVideoModule->videoData->itemInfo->itemStruct;
                     $id = $item->id;
 
